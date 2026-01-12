@@ -10,6 +10,16 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
+// Simple logging middleware
+app.use((req, res, next) => {
+    const logMessage = `${new Date().toISOString()} - ${req.method} ${req.url}\n`;
+    console.log(logMessage.trim());
+    fs.appendFile(path.join(__dirname, 'server.log'), logMessage, (err) => {
+        if (err) console.error("Failed to write to log file:", err);
+    });
+    next();
+});
+
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
